@@ -27,11 +27,13 @@ const updated = lastEdited(post);
     <header class="article-header">
       <h1>{title}</h1>
       <p class="meta">
+        {/* One date: "17 November 2026". Edited on a later day: "Posted … · Edited …" */}
+        {updated && 'Posted '}
         <time datetime={isoDay(date)}>{formatDate(date)}</time>
         {
           updated && (
             <span class="updated">
-              {' · '}Updated{' '}
+              {' · '}Edited{' '}
               <time datetime={updated.toISOString()}>{formatDate(updated, siteTimeZone)}</time>
             </span>
           )
