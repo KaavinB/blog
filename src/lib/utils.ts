@@ -15,10 +15,39 @@ export function url(path = '/'): string {
 
 export const postUrl = (post: CollectionEntry<'posts'>) => url(`/writing/${post.id}/`);
 
-/** Published posts, newest first. Drafts are visible only in `npm run dev`. */
+/**
+ * Published posts, newest first, by their posting date. Posts with the same
+ * date are ordered by when each was created, newest first.
+ * Drafts are visible only in `npm run dev`.
+ */
 export async function getPosts() {
   const posts = await getCollection('posts', ({ data }) => import.meta.env.DEV || !data.draft);
-  return posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  return posts.sort(
+    (a, b) =>
+      b.data.date.valueOf() - a.data.date.valueOf() ||
+      createdAt(b).valueOf() - createdAt(a).valueOf(),
+  );
+}
+
+/** Run a git command and return its output, or '' if git isn't available. */
+const gitCache = new Map<string, string>();
+function git(...args: string[]): string {
+  const key = args.join('\0');
+  if (!gitCache.has(key)) {
+    let out = '';
+    try {
+      out = execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    } catch {}
+    gitCache.set(key, out);
+  }
+  return gitCache.get(key)!;
+}
+
+/** When a post's file was first added to the repository (now, if not yet committed). */
+function createdAt(post: CollectionEntry<'posts'>): Date {
+  if (!post.filePath) return new Date();
+  const added = git('log', '--diff-filter=A', '--format=%cI', '--', post.filePath).split('\n').pop();
+  return added ? new Date(added) : new Date();
 }
 
 /**
@@ -58,17 +87,9 @@ export const siteTimeZone = (() => {
  */
 export function lastEdited(post: CollectionEntry<'posts'>): Date | undefined {
   if (!post.filePath) return undefined;
-  let edited: Date;
-  try {
-    const out = execFileSync('git', ['log', '-1', '--format=%cI', '--', post.filePath], {
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
-    if (!out) return undefined;
-    edited = new Date(out);
-  } catch {
-    return undefined;
-  }
+  const out = git('log', '-1', '--format=%cI', '--', post.filePath);
+  if (!out) return undefined;
+  const edited = new Date(out);
   const editedDay = isoDay(edited, siteTimeZone);
   const postDay = isoDay(post.data.date);
   return editedDay > postDay ? edited : undefined;
