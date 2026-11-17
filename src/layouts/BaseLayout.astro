@@ -37,7 +37,9 @@ if (image) {
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <link rel="icon" href={url('/favicon.ico')} sizes="32x32" />
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
     <link rel="alternate" type="application/rss+xml" title={site.name} href={new URL(url('/rss.xml'), Astro.site)} />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
