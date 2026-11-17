@@ -19,8 +19,8 @@ interface Props {
 
 const { title, description = site.description, image, type = 'website', publishedTime, noindex = false } = Astro.props;
 
-// Browser tab: "Post title · So I Was Thinking", or "So I Was Thinking · Your Name" on the homepage
-const pageTitle = title ? `${title} · ${site.title}` : `${site.title} · ${site.name}`;
+// Browser tab: "Post title · So I Was Thinking", or just "So I Was Thinking" on the homepage
+const pageTitle = title ? `${title} · ${site.title}` : site.title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
 let socialImage: string | undefined;
