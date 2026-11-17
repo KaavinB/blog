@@ -121,3 +121,7 @@ content:
         label: Language code
         type: string
         description: For example "en". Leave as is unless you write in another language.
+      - name: timezone
+        label: Timezone
+        type: string
+        description: Used for "Updated" dates on posts, e.g. America/Chicago or Europe/London.

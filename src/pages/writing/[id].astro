@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { formatDate, getPosts, url } from '../../lib/utils';
+import { formatDate, getPosts, isoDay, lastEdited, siteTimeZone, url } from '../../lib/utils';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -12,6 +12,7 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { title, date, description, cover, coverAlt, thumbnail, draft } = post.data;
 const { Content } = await render(post);
+const updated = lastEdited(post);
 ---
 
 <BaseLayout
@@ -20,12 +21,21 @@ const { Content } = await render(post);
   image={cover ?? thumbnail}
   type="article"
   publishedTime={date}
+  modifiedTime={updated}
 >
   <article>
     <header class="article-header">
       <h1>{title}</h1>
       <p class="meta">
-        <time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time>
+        <time datetime={isoDay(date)}>{formatDate(date)}</time>
+        {
+          updated && (
+            <span class="updated">
+              {' · '}Updated{' '}
+              <time datetime={updated.toISOString()}>{formatDate(updated, siteTimeZone)}</time>
+            </span>
+          )
+        }
         {draft && <span class="draft"> · Draft (not visible on the live site)</span>}
       </p>
     </header>

@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import { formatDate, postUrl } from '../lib/utils';
+import { formatDate, isoDay, postUrl } from '../lib/utils';
 
 interface Props {
   posts: CollectionEntry<'posts'>[];
@@ -37,9 +37,7 @@ const hasThumbnails = posts.some((post) => post.data.thumbnail);
               <a href={postUrl(post)}>{post.data.title}</a>
             </h2>
             <p class="meta">
-              <time datetime={post.data.date.toISOString().slice(0, 10)}>
-                {formatDate(post.data.date, 'month')}
-              </time>
+              <time datetime={isoDay(post.data.date)}>{formatDate(post.data.date)}</time>
               {post.data.draft && <span class="draft"> · Draft</span>}
             </p>
             {post.data.description && <p class="description">{post.data.description}</p>}
