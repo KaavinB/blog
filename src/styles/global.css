@@ -4,15 +4,15 @@
  */
 
 :root {
-  /* Colours */
-  --paper: #f7f4ee;
-  --paper-deep: #efeae1; /* code blocks, image placeholders */
-  --ink: #232120;
-  --ink-soft: #45413c;
-  --muted: #6c675f;
-  --rule: #e2dcd1;
-  --rule-strong: #b8b0a2;
-  --accent: #8a3324;
+  /* Colours: light-dark(light value, dark value) */
+  --paper: light-dark(#f7f4ee, #1c1b19);
+  --paper-deep: light-dark(#efeae1, #262421); /* code blocks, image placeholders */
+  --ink: light-dark(#232120, #e7e2d9);
+  --ink-soft: light-dark(#45413c, #cdc7bc);
+  --muted: light-dark(#6c675f, #9e978c);
+  --rule: light-dark(#e2dcd1, #34312d);
+  --rule-strong: light-dark(#b8b0a2, #5c574f);
+  --accent: light-dark(#8a3324, #e39a83);
 
   /* Fonts — all system fonts, nothing to download */
   --serif: Charter, 'Bitstream Charter', 'Iowan Old Style', 'Sitka Text', Cambria, Georgia, serif;
@@ -23,20 +23,16 @@
   --measure: 36rem;
   --gutter: 1.25rem;
 
+  /* Follows the system setting unless the reader picks one with the toggle */
   color-scheme: light dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #1c1b19;
-    --paper-deep: #262421;
-    --ink: #e7e2d9;
-    --ink-soft: #cdc7bc;
-    --muted: #9e978c;
-    --rule: #34312d;
-    --rule-strong: #5c574f;
-    --accent: #e39a83;
-  }
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 /* ---------- Base ---------- */
@@ -300,13 +296,7 @@ img {
 
 /* Syntax colours from Shiki (light and dark) */
 .astro-code span {
-  color: var(--shiki-light);
-}
-
-@media (prefers-color-scheme: dark) {
-  .astro-code span {
-    color: var(--shiki-dark);
-  }
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
 }
 
 /* Tables */

@@ -12,8 +12,50 @@ const isAbout = path.startsWith(url('/about/'));
   <nav aria-label="Main">
     <a href={url('/')} aria-current={isWriting ? 'page' : undefined}>Writing</a>
     <a href={url('/about/')} aria-current={isAbout ? 'page' : undefined}>About</a>
+    <!-- Hidden until the script below runs, since it does nothing without JavaScript -->
+    <button class="theme-toggle" type="button" hidden></button>
   </nav>
 </header>
+
+<script>
+  const root = document.documentElement;
+  const button = document.querySelector<HTMLButtonElement>('.theme-toggle');
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
+  const paper = { light: '#f7f4ee', dark: '#1c1b19' };
+
+  const current = () =>
+    (root.dataset.theme as 'light' | 'dark' | undefined) ?? (systemDark.matches ? 'dark' : 'light');
+
+  function update() {
+    if (!button) return;
+    const next = current() === 'dark' ? 'light' : 'dark';
+    button.textContent = next === 'dark' ? 'Dark' : 'Light';
+    button.setAttribute('aria-label', `Switch to ${next} mode`);
+    // Match the browser's toolbar colour to the chosen theme
+    document
+      .querySelectorAll('meta[name="theme-color"]')
+      .forEach((meta) => meta.setAttribute('content', paper[current()]));
+  }
+
+  if (button) {
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      const next = current() === 'dark' ? 'light' : 'dark';
+      // Going back to what the system prefers forgets the choice,
+      // so the site follows the system setting again.
+      const systemTheme = systemDark.matches ? 'dark' : 'light';
+      try {
+        if (next === systemTheme) localStorage.removeItem('theme');
+        else localStorage.setItem('theme', next);
+      } catch {}
+      if (next === systemTheme) delete root.dataset.theme;
+      else root.dataset.theme = next;
+      update();
+    });
+    systemDark.addEventListener('change', update);
+    update();
+  }
+</script>
 
 <style>
   .site-header {
@@ -39,18 +81,21 @@ const isAbout = path.startsWith(url('/about/'));
 
   nav {
     display: flex;
+    align-items: baseline;
     gap: 1.25rem;
     font-family: var(--sans);
     font-size: 0.875rem;
   }
 
-  nav a {
+  nav a,
+  .theme-toggle {
     color: var(--muted);
     text-decoration: none;
     padding-block: 0.25rem;
   }
 
-  nav a:hover {
+  nav a:hover,
+  .theme-toggle:hover {
     color: var(--ink);
   }
 
@@ -60,5 +105,22 @@ const isAbout = path.startsWith(url('/about/'));
     text-decoration-color: var(--rule-strong);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.35em;
+  }
+
+  .theme-toggle {
+    margin: 0;
+    padding-inline: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+    /* a hairline separates it from the page links */
+    padding-left: 1.25rem;
+    border-left: 1px solid var(--rule);
+    line-height: 1;
+  }
+
+  .theme-toggle[hidden] {
+    display: none;
   }
 </style>
