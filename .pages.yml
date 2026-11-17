@@ -99,11 +99,16 @@ content:
     path: src/data/site.json
     format: json
     fields:
+      - name: title
+        label: Blog title
+        type: string
+        required: true
+        description: Shown at the top of every page and in browser tabs.
       - name: name
         label: Your name
         type: string
         required: true
-        description: Shown at the top of every page.
+        description: Shown in the footer and used as the author.
       - name: intro
         label: Introduction
         type: text

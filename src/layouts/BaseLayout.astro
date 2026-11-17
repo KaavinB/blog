@@ -19,7 +19,8 @@ interface Props {
 
 const { title, description = site.description, image, type = 'website', publishedTime, noindex = false } = Astro.props;
 
-const pageTitle = title ? `${title} · ${site.name}` : site.name;
+// Browser tab: "Post title · So I Was Thinking", or "So I Was Thinking · Your Name" on the homepage
+const pageTitle = title ? `${title} · ${site.title}` : `${site.title} · ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
 let socialImage: string | undefined;
@@ -40,7 +41,7 @@ if (image) {
     <link rel="icon" href={url('/favicon.ico')} sizes="32x32" />
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
-    <link rel="alternate" type="application/rss+xml" title={site.name} href={new URL(url('/rss.xml'), Astro.site)} />
+    <link rel="alternate" type="application/rss+xml" title={site.title} href={new URL(url('/rss.xml'), Astro.site)} />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1c1b19" media="(prefers-color-scheme: dark)" />
@@ -53,8 +54,9 @@ if (image) {
     </script>
 
     <meta property="og:type" content={type} />
-    <meta property="og:site_name" content={site.name} />
-    <meta property="og:title" content={title ?? site.name} />
+    <meta property="og:site_name" content={site.title} />
+    <meta name="author" content={site.name} />
+    <meta property="og:title" content={title ?? site.title} />
     <meta property="og:description" content={description} />
     {!noindex && <meta property="og:url" content={canonical} />}
     {socialImage && <meta property="og:image" content={socialImage} />}

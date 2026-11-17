@@ -31,7 +31,7 @@ Images go in `src/content/images/` and are referenced as `../images/name.jpg`. A
 | Posts | `src/content/posts/` |
 | Images | `src/content/images/` |
 | About page | `src/content/pages/about.md` |
-| Name, intro, site description | `src/data/site.json` |
+| Blog title, your name, intro, site description | `src/data/site.json` |
 | Colours, fonts, typography | `src/styles/global.css` |
 | Pages CMS settings | `.pages.yml` |
 

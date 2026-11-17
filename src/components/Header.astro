@@ -8,7 +8,7 @@ const isAbout = path.startsWith(url('/about/'));
 ---
 
 <header class="site-header">
-  <a class="site-name" href={url('/')}>{site.name}</a>
+  <a class="site-name" href={url('/')}>{site.title}</a>
   <nav aria-label="Main">
     <a href={url('/')} aria-current={isWriting ? 'page' : undefined}>Writing</a>
     <a href={url('/about/')} aria-current={isAbout ? 'page' : undefined}>About</a>

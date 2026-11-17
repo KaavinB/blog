@@ -8,7 +8,7 @@ export async function GET(context: APIContext) {
   const siteUrl = new URL(url('/'), context.site);
 
   return rss({
-    title: site.name,
+    title: site.title,
     description: site.description,
     site: siteUrl,
     items: posts.map((post) => ({
