@@ -124,4 +124,8 @@ content:
       - name: timezone
         label: Timezone
         type: string
-        description: Used for "Updated" dates on posts, e.g. America/Chicago or Europe/London.
+        description: Used for "Edited" dates on posts, e.g. America/Chicago or Europe/London.
+      - name: goatcounter
+        label: GoatCounter code
+        type: string
+        description: The "xyz" in xyz.goatcounter.com. Turns on view counts. Leave empty to switch them off.

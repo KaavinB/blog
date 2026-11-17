@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ViewCount from '../../components/ViewCount.astro';
 import { formatDate, getPosts, isoDay, lastEdited, siteTimeZone, url } from '../../lib/utils';
 
 export async function getStaticPaths() {
@@ -38,6 +39,7 @@ const updated = lastEdited(post);
             </span>
           )
         }
+        <ViewCount />
         {draft && <span class="draft"> · Draft (not visible on the live site)</span>}
       </p>
     </header>

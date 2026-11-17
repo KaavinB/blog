@@ -1,0 +1,59 @@
+---
+/*
+ * "· 👁 123" after the date on an article, using GoatCounter's public counter.
+ * Hidden until the number arrives, and stays hidden if counting is off,
+ * the request fails, or the post has no views yet.
+ *
+ * GoatCounter caches counts for up to four hours, so new views appear with a delay.
+ * Needs "Allow adding visitor counts on your website" turned on in GoatCounter's settings.
+ */
+import { goatcounter } from '../lib/utils';
+---
+
+{
+  goatcounter && (
+    <span class="views" data-goatcounter={goatcounter} data-path={Astro.url.pathname} hidden>
+      {' · '}
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+      <span class="count"></span><span class="visually-hidden"> views</span>
+    </span>
+  )
+}
+
+<script>
+  const el = document.querySelector<HTMLElement>('.views[data-goatcounter]');
+  if (el) {
+    const { goatcounter, path = location.pathname } = el.dataset;
+    fetch(`https://${goatcounter}.goatcounter.com/counter/${encodeURIComponent(path)}.json`)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        // GoatCounter formats the number with spaces, e.g. "1 234"
+        const views = Number(String(data?.count ?? '').replace(/\D/g, ''));
+        if (!views) return;
+        el.querySelector('.count')!.textContent = views.toLocaleString('en-GB');
+        el.hidden = false;
+      })
+      .catch(() => {});
+  }
+</script>
+
+<style>
+  .views[hidden] {
+    display: none;
+  }
+
+  svg {
+    width: 1.05em;
+    height: 1.05em;
+    margin-right: 0.25em;
+    vertical-align: -0.2em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>

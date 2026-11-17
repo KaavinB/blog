@@ -69,6 +69,12 @@ export function isoDay(date: Date, timeZone = 'UTC'): string {
   return date.toLocaleDateString('en-CA', { timeZone });
 }
 
+/**
+ * Your GoatCounter code (the "xyz" in xyz.goatcounter.com), from site.json.
+ * Empty means view counting is switched off.
+ */
+export const goatcounter = /^[a-z0-9-]+$/i.test(site.goatcounter ?? '') ? site.goatcounter : '';
+
 /** The timezone from site.json, or UTC if it's missing or not a real timezone. */
 export const siteTimeZone = (() => {
   try {
