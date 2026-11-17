@@ -1,0 +1,64 @@
+---
+import site from '../data/site.json';
+import { url } from '../lib/utils';
+
+const path = Astro.url.pathname;
+const isWriting = path === url('/') || path.startsWith(url('/writing/'));
+const isAbout = path.startsWith(url('/about/'));
+---
+
+<header class="site-header">
+  <a class="site-name" href={url('/')}>{site.name}</a>
+  <nav aria-label="Main">
+    <a href={url('/')} aria-current={isWriting ? 'page' : undefined}>Writing</a>
+    <a href={url('/about/')} aria-current={isAbout ? 'page' : undefined}>About</a>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding-block: 2.25rem 0;
+  }
+
+  .site-name {
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: 0.005em;
+  }
+
+  .site-name:hover {
+    color: var(--accent);
+  }
+
+  nav {
+    display: flex;
+    gap: 1.25rem;
+    font-family: var(--sans);
+    font-size: 0.875rem;
+  }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    padding-block: 0.25rem;
+  }
+
+  nav a:hover {
+    color: var(--ink);
+  }
+
+  nav a[aria-current='page'] {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--rule-strong);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.35em;
+  }
+</style>

@@ -1,0 +1,118 @@
+# Pages CMS configuration — https://pagescms.org/docs/configuration/
+#
+# Images are stored in src/content/images/ and written into posts as
+# relative paths (../images/photo.jpg). That lets Astro resize them and
+# makes them work on any GitHub Pages address.
+
+media:
+  input: src/content/images
+  output: ../images
+  extensions: [jpg, jpeg, png, webp, avif]
+  rename: safe
+
+content:
+  - name: posts
+    label: Writing
+    type: collection
+    path: src/content/posts
+    format: yaml-frontmatter
+    exclude: [.gitkeep]
+    filename:
+      template: "{fields.title}.md"
+      field: create
+    view:
+      fields: [title, date, draft]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: description
+        label: Short description
+        type: text
+        description: One or two sentences shown under the title on the homepage. Optional.
+      - name: thumbnail
+        label: Thumbnail
+        type: image
+        description: Small image shown next to the title on the homepage. Optional.
+      - name: cover
+        label: Cover image
+        type: image
+        description: Large image shown at the top of the article. Optional.
+      - name: coverAlt
+        label: Cover image description
+        type: string
+        description: Describe the cover image for people using screen readers.
+      - name: draft
+        label: Draft
+        type: boolean
+        default: false
+        description: Drafts are saved but not shown on the website.
+      - name: body
+        label: Article
+        type: rich-text
+        options:
+          format: markdown
+
+  - name: about
+    label: About page
+    type: file
+    path: src/content/pages/about.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Short description
+        type: string
+        description: Used by search engines and link previews.
+      - name: photo
+        label: Photo
+        type: image
+        description: Optional.
+      - name: photoAlt
+        label: Photo description
+        type: string
+        description: Describe the photo for people using screen readers.
+      - name: body
+        label: Text
+        type: rich-text
+        options:
+          format: markdown
+
+  - name: site
+    label: Site settings
+    type: file
+    path: src/data/site.json
+    format: json
+    fields:
+      - name: name
+        label: Your name
+        type: string
+        required: true
+        description: Shown at the top of every page.
+      - name: intro
+        label: Introduction
+        type: text
+        description: The short line at the top of the homepage.
+      - name: description
+        label: Site description
+        type: text
+        description: Used by search engines, link previews and the RSS feed.
+      - name: language
+        label: Language code
+        type: string
+        description: For example "en". Leave as is unless you write in another language.

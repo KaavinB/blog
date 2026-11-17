@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../lib/utils';
+---
+
+<BaseLayout title="Page not found" noindex>
+  <h1>Page not found</h1>
+  <p>There's nothing at this address. Try the <a href={url('/')}>list of writing</a> instead.</p>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin: 3.5rem 0 1rem;
+    font-size: 1.85rem;
+    font-weight: 400;
+  }
+</style>

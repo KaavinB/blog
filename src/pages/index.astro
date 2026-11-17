@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostList from '../components/PostList.astro';
+import site from '../data/site.json';
+import { getPosts } from '../lib/utils';
+
+const posts = await getPosts();
+---
+
+<BaseLayout>
+  <h1 class="visually-hidden">{site.name}: Writing</h1>
+  {site.intro && <p class="intro">{site.intro}</p>}
+  <PostList posts={posts} />
+</BaseLayout>
+
+<style>
+  .intro {
+    margin: 3.5rem 0 3rem;
+    max-width: 32rem;
+    color: var(--ink-soft);
+    text-wrap: pretty;
+  }
+
+  @media (min-width: 40em) {
+    .intro {
+      margin-block: 4.5rem 3.5rem;
+    }
+  }
+</style>

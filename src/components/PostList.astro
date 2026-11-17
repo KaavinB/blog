@@ -1,0 +1,177 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, postUrl } from '../lib/utils';
+
+interface Props {
+  posts: CollectionEntry<'posts'>[];
+}
+
+const { posts } = Astro.props;
+
+// Reserve a thumbnail column only if at least one post has a thumbnail,
+// so a list without any images doesn't start with an empty gap.
+const hasThumbnails = posts.some((post) => post.data.thumbnail);
+---
+
+{
+  posts.length === 0 ? (
+    <p class="empty">Nothing here yet.</p>
+  ) : (
+    <ol class:list={['posts', { 'with-thumbnails': hasThumbnails }]} reversed>
+      {posts.map((post) => (
+        <li class="post">
+          {post.data.thumbnail && (
+            <Image
+              class="thumbnail"
+              src={post.data.thumbnail}
+              alt=""
+              width={112}
+              height={84}
+              densities={[1, 2]}
+              fit="cover"
+            />
+          )}
+          <div class="text">
+            <h2 class="title">
+              <a href={postUrl(post)}>{post.data.title}</a>
+            </h2>
+            <p class="meta">
+              <time datetime={post.data.date.toISOString().slice(0, 10)}>
+                {formatDate(post.data.date, 'month')}
+              </time>
+              {post.data.draft && <span class="draft"> · Draft</span>}
+            </p>
+            {post.data.description && <p class="description">{post.data.description}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+<style>
+  .posts {
+    --thumb: 4.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .post {
+    position: relative;
+    padding-block: 1.6rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .post:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .with-thumbnails .post {
+    display: grid;
+    grid-template-columns: var(--thumb) minmax(0, 1fr);
+    column-gap: 1.1rem;
+    align-items: start;
+  }
+
+  /* Posts without a thumbnail still line up with the others. */
+  .with-thumbnails .text {
+    grid-column: 2;
+  }
+
+  .thumbnail {
+    display: block;
+    width: var(--thumb);
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    margin-top: 0.3rem;
+    background: var(--paper-deep);
+    border-radius: 2px;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.003em;
+    text-wrap: pretty;
+  }
+
+  .title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  /* The whole row is clickable: the title link stretches over it. */
+  .title a::after {
+    content: '';
+    position: absolute;
+    inset: 0.6rem -0.5rem;
+  }
+
+  .post:first-child .title a::after {
+    top: -0.5rem;
+  }
+
+  .title a:focus-visible {
+    outline: none;
+  }
+
+  .title a:focus-visible::after {
+    outline: 2px solid var(--accent);
+    outline-offset: 0;
+    border-radius: 2px;
+  }
+
+  .post:hover .title a {
+    color: var(--accent);
+  }
+
+  .meta {
+    margin: 0.3rem 0 0;
+  }
+
+  .draft {
+    color: var(--accent);
+  }
+
+  .description {
+    margin: 0.45rem 0 0;
+    font-size: 0.97rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    text-wrap: pretty;
+  }
+
+  .empty {
+    margin: 0;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  @media (min-width: 40em) {
+    .posts {
+      --thumb: 6.5rem;
+    }
+
+    .with-thumbnails .post {
+      column-gap: 1.5rem;
+    }
+
+    .post {
+      padding-block: 1.9rem;
+    }
+
+    .title {
+      font-size: 1.35rem;
+    }
+
+    .title a::after {
+      inset: 0.75rem -0.75rem;
+    }
+  }
+</style>

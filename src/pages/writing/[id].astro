@@ -1,0 +1,106 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, getPosts, url } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { title, date, description, cover, coverAlt, thumbnail, draft } = post.data;
+const { Content } = await render(post);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={cover ?? thumbnail}
+  type="article"
+  publishedTime={date}
+>
+  <article>
+    <header class="article-header">
+      <h1>{title}</h1>
+      <p class="meta">
+        <time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time>
+        {draft && <span class="draft"> · Draft (not visible on the live site)</span>}
+      </p>
+    </header>
+
+    {
+      cover && (
+        <Image
+          class="cover"
+          src={cover}
+          alt={coverAlt}
+          widths={[640, 960, 1280]}
+          sizes="(min-width: 40rem) 36rem, 100vw"
+          loading="eager"
+        />
+      )
+    }
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+
+  <p class="back meta"><a href={url('/')}>&larr; All writing</a></p>
+</BaseLayout>
+
+<style>
+  .article-header {
+    margin: 3.5rem 0 2.5rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.85rem;
+    font-weight: 400;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .article-header .meta {
+    margin: 0.85rem 0 0;
+  }
+
+  .draft {
+    color: var(--accent);
+  }
+
+  .cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 2.5rem;
+    background: var(--paper-deep);
+  }
+
+  .back {
+    margin: 4rem 0 0;
+  }
+
+  .back a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .back a:hover {
+    color: var(--accent);
+  }
+
+  @media (min-width: 40em) {
+    .article-header {
+      margin-top: 4.5rem;
+    }
+
+    h1 {
+      font-size: 2.35rem;
+    }
+  }
+</style>
